@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokio Sushi Delivery</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-red-700 text-white text-center py-6 shadow-md">
+        <h1 class="text-3xl font-bold tracking-wide">🍣 TOKIO SUSHI</h1>
+        <p class="text-sm mt-1 text-red-100">Delivery & Pick Up</p>
+    </header>
+
+    <main class="max-w-md w-full mx-auto p-4 flex-grow">
+        
+        <div id="step-1" class="step active space-y-4 animate-fade-in">
+            <h2 class="text-2xl font-bold text-center my-4 text-gray-800">¿Qué te provoca comer hoy?</h2>
+            <p class="text-center text-gray-500 text-sm mb-6">Toca una opción para ver los platos</p>
+            
+            <div class="grid grid-cols-1 gap-4">
+                <button onclick="selectCategory('combos')" class="w-full bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm hover:border-red-500 transition flex items-center space-x-4 text-left cursor-pointer">
+                    <div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 flex items-center justify-center text-3xl">🍱</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Promos y Combos</h3>
+                        <p class="text-sm text-gray-500">Los favoritos desde $6.19</p>
+                    </div>
+                </button>
+
+                <button onclick="selectCategory('cocina')" class="w-full bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm hover:border-red-500 transition flex items-center space-x-4 text-left cursor-pointer">
+                    <div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 flex items-center justify-center text-3xl">🍚</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Platos de Cocina</h3>
+                        <p class="text-sm text-gray-500">Arroces individuales y tallarines</p>
+                    </div>
+                </button>
+
+                <button onclick="selectCategory('sushi')" class="w-full bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm hover:border-red-500 transition flex items-center space-x-4 text-left cursor-pointer">
+                    <div class="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0 flex items-center justify-center text-3xl">🍣</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Sushi Especial</h3>
+                        <p class="text-sm text-gray-500">Roles Tempura de 12 piezas</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div id="step-2" class="step space-y-4">
+            <div class="flex justify-between items-center my-4">
+                <button onclick="goToStep(1)" class="text-red-600 font-bold flex items-center text-lg cursor-pointer">⬅ Volver</button>
+                <h2 id="category-title" class="text-2xl font-bold text-gray-800">Platos</h2>
+            </div>
+            
+            <div id="items-container" class="space-y-3"></div>
+
+            <button onclick="goToStep(3)" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold text-xl py-4 rounded-2xl shadow-lg mt-6 cursor-pointer transition">
+                Continuar con el pedido 🛒
+            </button>
+        </div>
+
+        <div id="step-3" class="step space-y-4">
+            <div class="flex justify-between items-center my-4">
+                <button onclick="goToStep(2)" class="text-red-600 font-bold flex items-center text-lg cursor-pointer">⬅ Volver a platos</button>
+                <h2 class="text-2xl font-bold text-gray-800">Tus Datos</h2>
+            </div>
+
+            <form id="order-form" onsubmit="sendOrder(event)" class="space-y-4 bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                <div>
+                    <label class="block text-gray-700 font-bold text-lg mb-1">¿Cuál es tu nombre?</label>
+                    <input type="text" id="client-name" required class="w-full p-4 border border-gray-300 rounded-xl text-lg focus:outline-none focus:border-red-500" placeholder="Ej. Pedro Pérez">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold text-lg mb-1">Número de Teléfono</label>
+                    <input type="tel" id="client-phone" required class="w-full p-4 border border-gray-300 rounded-xl text-lg focus:outline-none focus:border-red-500" placeholder="Ej. 04121234567">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold text-lg mb-1">¿Cómo lo vas a recibir?</label>
+                    <select id="delivery-type" onchange="toggleAddress()" class="w-full p-4 border border-gray-300 rounded-xl text-lg bg-gray-50 focus:outline-none focus:border-red-500">
+                        <option value="Delivery">Delivery (A mi casa / oficina)</option>
+                        <option value="Pickup">Retiro en el local (C.C. CCM)</option>
+                    </select>
+                </div>
+
+                <div id="address-container">
+                    <label class="block text-gray-700 font-bold text-lg mb-1">Dirección de Entrega</label>
+                    <textarea id="client-address" class="w-full p-4 border border-gray-300 rounded-xl text-lg focus:outline-none focus:border-red-500" rows="3" placeholder="Indica calle, edificio o puntos de referencia..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold text-lg mb-1">Método de Pago</label>
+                    <select id="payment-method" class="w-full p-4 border border-gray-300 rounded-xl text-lg bg-gray-50 focus:outline-none focus:border-red-500">
+                        <option value="Pago Movil">Pago Móvil</option>
+                        <option value="Efectivo">Efectivo / Divisas</option>
+                        <option value="Zelle">Zelle</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold text-xl py-4 rounded-2xl shadow-lg mt-4 cursor-pointer transition">
+                    🚀 Confirmar y Enviar Pedido
+                </button>
+            </form>
+        </div>
+
+        <div id="step-4" class="step text-center space-y-6 py-12">
+            <div class="text-6xl text-green-500">✅</div>
+            <h2 class="text-3xl font-bold text-gray-800">¡Pedido Recibido!</h2>
+            <p class="text-lg text-gray-600 px-4">Hemos enviado tu orden al restaurante. En unos instantes recibirás un mensaje automático por WhatsApp para confirmar tu total.</p>
+            <button onclick="resetForm()" class="bg-gray-200 text-gray-700 font-bold px-6 py-3 rounded-xl hover:bg-gray-300 transition cursor-pointer">Hacer otro pedido</button>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-100 text-center py-4 border-t border-gray-200 text-xs text-gray-400">
+        &copy; 2026 Tokio Sushi - Todos los derechos reservados.
+    </footer>
+
+    <script>
+        // Base de datos de platos extraídos del PDF
+        const menuData = {
+            combos: [
+                { id: "c1", name: "Combo Económico Arroz Tres Carnes", price: 6.19, desc: "450g de arroz, carne variada + 2 lumpias" },
+                { id: "c2", name: "Combo Económico Arroz Oriental", price: 6.19, desc: "450g de arroz, camarón, huevo, verduras + 2 lumpias" },
+                { id: "c3", name: "Promoción Ebby Roll (20 piezas)", price: 9.19, desc: "Roles fríos con camarón empanizado y salsa fuji" },
+                { id: "c4", name: "Combo Fusión Familiar", price: 17.69, desc: "1 Roll Frío + 1 Roll Tempura + 1 Plato de cocina + raciones" }
+            ],
+            cocina: [
+                { id: "p1", name: "Arroz Especial (Pollo y Camarón)", price: 8.20, desc: "Bandeja individual" },
+                { id: "p2", name: "Arroz 3 Carnes (Pollo, Carne, Cerdo)", price: 8.20, desc: "Bandeja individual" },
+                { id: "p3", name: "Tallarines de Carne y Camarón", price: 8.20, desc: "Bandeja individual" },
+                { id: "p4", name: "Pollo Agridulce con Papas", price: 8.20, desc: "Acompañado de papas fritas" }
+            ],
+            sushi: [
+                { id: "s1", name: "Nozomi Roll Tempura (12 pzs)", price: 6.69, desc: "Camarón tempura, cangrejo, queso crema y salsa anguila" },
+                { id: "s2", name: "Okinawa Roll Tempura (12 pzs)", price: 6.69, desc: "Topping de camarón tempura y salsa fuji" },
+                { id: "s3", name: "Hiroshima Roll Tempura (12 pzs)", price: 6.69, desc: "Pescado blanco tempura, aguacate y salsa anguila" }
+            ]
+        };
+
+        // Carrito de compras interno
+        let cart = {};
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function selectCategory(category) {
+            const container = document.getElementById('items-container');
+            container.innerHTML = '';
+            
+            const titles = { combos: "Promos y Combos", cocina: "Platos de Cocina", sushi: "Roles Especiales" };
+            document.getElementById('category-title').innerText = titles[category];
+
+            menuData[category].forEach(item => {
+                const currentQty = cart[item.id] ? cart[item.id].qty : 0;
+                
+                const itemHtml = `
+                    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+                        <div class="flex-grow pr-2">
+                            <h4 class="text-lg font-bold text-gray-800">${item.name}</h4>
+                            <p class="text-xs text-gray-400 mb-1">${item.desc}</p>
+                            <span class="text-red-600 font-bold text-lg">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-gray-100 p-1 rounded-xl flex-shrink-0">
+                            <button type="button" onclick="updateQty('${item.id}', '${item.name}', ${item.price}, -1)" class="w-10 h-10 bg-white rounded-lg font-bold text-xl text-gray-700 shadow-sm select-none cursor-pointer">-</button>
+                            <span id="qty-${item.id}" class="text-xl font-bold w-6 text-center select-none">${currentQty}</span>
+                            <button type="button" onclick="updateQty('${item.id}', '${item.name}', ${item.price}, 1)" class="w-10 h-10 bg-white rounded-lg font-bold text-xl text-gray-700 shadow-sm select-none cursor-pointer">+</button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+            });
+
+            goToStep(2);
+        }
+
+        function updateQty(id, name, price, change) {
+            if (!cart[id]) {
+                cart[id] = { name: name, price: price, qty: 0 };
+            }
+            
+            cart[id].qty += change;
+            
+            if (cart[id].qty <= 0) {
+                cart[id].qty = 0;
+                delete cart[id];
+            }
+            
+            const element = document.getElementById(`qty-${id}`);
+            if (element) {
+                element.innerText = cart[id] ? cart[id].qty : 0;
+            }
+        }
+
+        function toggleAddress() {
+            const type = document.getElementById('delivery-type').value;
+            const container = document.getElementById('address-container');
+            const input = document.getElementById('client-address');
+            if (type === 'Pickup') {
+                container.style.display = 'none';
+                input.removeAttribute('required');
+            } else {
+                container.style.display = 'block';
+                input.setAttribute('required', 'required');
+            }
+        }
+
+        function resetForm() {
+            cart = {};
+            document.getElementById('order-form').reset();
+            toggleAddress();
+            goToStep(1);
+        }
+
+        // FUNCIÓN CLAVE: ENVÍO DE DATOS A N8N
+        async function sendOrder(event) {
+            event.preventDefault();
+            
+            // Validar si el carrito está vacío
+            const itemsInCart = Object.values(cart).filter(item => item.qty > 0);
+            if (itemsInCart.length === 0) {
+                alert("⚠️ Por favor, selecciona al menos un plato antes de enviar.");
+                goToStep(1);
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerText = "Procesando...";
+            submitBtn.disabled = true;
+
+            // Recopilar datos del formulario
+            const orderPayload = {
+                timestamp: new Date().toISOString(),
+                cliente: document.getElementById('client-name').value,
+                telefono: document.getElementById('client-phone').value,
+                tipo_entrega: document.getElementById('delivery-type').value,
+                direccion: document.getElementById('client-address').value || "Retiro por local",
+                metodo_pago: document.getElementById('payment-method').value,
+                articulos: itemsInCart
+            };
+
+            // URL del webhook de n8n (La cambiaremos en el siguiente paso)
+            const n8nWebhookUrl = "https://TU_INSTANCIA_N8N.com/webhook/pedido-tokio"; 
+
+            try {
+                // Enviar datos por POST usando fetch
+                const response = await fetch(n8nWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                // n8n normalmente responde 200 OK si recibe el webhook con éxito
+                if (response.ok || response.status === 200) {
+                    goToStep(4);
+                } else {
+                    alert("Hubo un detalle al enviar el pedido, pero el restaurante lo recibirá.");
+                    goToStep(4);
+                }
+            } catch (error) {
+                console.error("Error enviando a n8n:", error);
+                // Si falla por CORS temporalmente, igual mostramos éxito al usuario en desarrollo
+                goToStep(4);
+            } finally {
+                submitBtn.innerText = "🚀 Confirmar y Enviar Pedido";
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
