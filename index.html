@@ -83,8 +83,9 @@
 
             <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 shadow-sm">
                 <h3 class="font-bold text-amber-900 text-lg mb-2">Tu Carrito de Compras:</h3>
-                <div id="checkout-cart-summary" class="space-y-1 text-sm text-amber-950"></div>
-                <div class="border-t border-amber-200 mt-2 pt-2 flex justify-between font-bold text-lg text-amber-900">
+                <div id="checkout-cart-summary" class="space-y-2"></div>
+                
+                <div class="border-t border-amber-200 mt-3 pt-2 flex justify-between font-bold text-lg text-amber-900">
                     <span>Total a Pagar:</span>
                     <span id="checkout-total-price">$0.00</span>
                 </div>
@@ -187,14 +188,14 @@
         // Escucha si el cliente usa el botón "Atrás" nativo de su teléfono o navegador
         window.onpopstate = function(event) {
             if (event.state && event.state.step) {
-                goToStep(event.state.step, false); // Cambia de pantalla sin volver a empujar el historial
+                goToStep(event.state.step, false);
             } else {
                 goToStep(1, false);
             }
         };
 
         function handleHeaderBack() {
-            history.back(); // Ejecuta la acción "Atrás" simulando el botón del navegador
+            history.back();
         }
 
         function goToStep(stepNumber, pushState = true) {
@@ -212,7 +213,6 @@
 
             updateStickyBarVisibility(stepNumber);
 
-            // Guardar el paso actual en el historial de navegación del dispositivo
             if (pushState) {
                 history.pushState({ step: stepNumber }, `Paso ${stepNumber}`);
             }
@@ -265,6 +265,24 @@
             }
             
             calculateTotals();
+
+            // Si el cambio de cantidad ocurre en la pantalla de resumen (Paso 3), redibujar la lista al instante
+            if (document.getElementById('step-3').classList.contains('active')) {
+                prepareCheckout();
+            }
+        }
+
+        // Eliminar por completo un artículo desde el resumen
+        function removeCartItem(id) {
+            delete cart[id];
+            const element = document.getElementById(`qty-${id}`);
+            if (element) element.innerText = 0;
+            
+            calculateTotals();
+
+            if (document.getElementById('step-3').classList.contains('active')) {
+                prepareCheckout();
+            }
         }
 
         function calculateTotals() {
@@ -301,20 +319,42 @@
             const summaryContainer = document.getElementById('checkout-cart-summary');
             summaryContainer.innerHTML = '';
             
+            const cartItems = Object.keys(cart);
+            
+            // Si el usuario borró todo desde el resumen, regresarlo al menú principal
+            if (cartItems.length === 0) {
+                document.getElementById('checkout-total-price').innerText = "$0.00";
+                goToStep(1);
+                return;
+            }
+            
             let total = 0;
-            Object.values(cart).forEach(item => {
+            cartItems.forEach(id => {
+                const item = cart[id];
                 const subtotal = item.price * item.qty;
                 total += subtotal;
-                summaryContainer.insertAdjacentHTML('beforeend', `
-                    <div class="flex justify-between py-0.5 border-b border-amber-100">
-                        <span>${item.qty}x ${item.name}</span>
-                        <span class="font-medium">$${subtotal.toFixed(2)}</span>
+                
+                // Generar fila interactiva con controles (+ / -) y botón eliminar (❌)
+                const summaryRowHtml = `
+                    <div class="flex items-center justify-between py-2 border-b border-amber-200 gap-2">
+                        <div class="flex-grow">
+                            <p class="font-bold text-gray-800 text-sm leading-tight">${item.name}</p>
+                            <p class="text-xs text-amber-900 font-medium mt-0.5">$${item.price.toFixed(2)} c/u • Subtotal: <span class="font-bold">$${subtotal.toFixed(2)}</span></p>
+                        </div>
+                        <div class="flex items-center space-x-1.5 bg-white border border-amber-300 p-1 rounded-xl flex-shrink-0">
+                            <button type="button" onclick="updateQty('${id}', '${item.name}', ${item.price}, -1)" class="w-8 h-8 bg-amber-100 text-amber-900 rounded-lg font-bold text-md flex items-center justify-center cursor-pointer select-none shadow-sm">-</button>
+                            <span class="text-sm font-black w-5 text-center select-none text-gray-800">${item.qty}</span>
+                            <button type="button" onclick="updateQty('${id}', '${item.name}', ${item.price}, 1)" class="w-8 h-8 bg-amber-100 text-amber-900 rounded-lg font-bold text-md flex items-center justify-center cursor-pointer select-none shadow-sm">+</button>
+                        </div>
+                        <button type="button" onclick="removeCartItem('${id}')" class="text-red-500 hover:text-red-700 text-md p-1 cursor-pointer select-none flex-shrink-0" title="Eliminar artículo">
+                            ❌
+                        </button>
                     </div>
-                `);
+                `;
+                summaryContainer.insertAdjacentHTML('beforeend', summaryRowHtml);
             });
             
             document.getElementById('checkout-total-price').innerText = `$${total.toFixed(2)}`;
-            goToStep(3);
         }
 
         function toggleAddress() {
