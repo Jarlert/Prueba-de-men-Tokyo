@@ -180,12 +180,10 @@
 
         let cart = {};
 
-        // Inyectar estado inicial en el historial al cargar la página
         window.onload = function() {
             history.replaceState({ step: 1 }, "Paso 1");
         };
 
-        // Escucha si el cliente usa el botón "Atrás" nativo de su teléfono o navegador
         window.onpopstate = function(event) {
             if (event.state && event.state.step) {
                 goToStep(event.state.step, false);
@@ -203,7 +201,6 @@
             document.getElementById(`step-${stepNumber}`).classList.add('active');
             window.scrollTo(0, 0);
             
-            // Mostrar u ocultar la flecha de atrás en el header superior
             const backBtn = document.getElementById('header-back-btn');
             if (stepNumber > 1 && stepNumber < 4) {
                 backBtn.classList.remove('invisible');
@@ -266,13 +263,11 @@
             
             calculateTotals();
 
-            // Si el cambio de cantidad ocurre en la pantalla de resumen (Paso 3), redibujar la lista al instante
             if (document.getElementById('step-3').classList.contains('active')) {
                 prepareCheckout();
             }
         }
 
-        // Eliminar por completo un artículo desde el resumen
         function removeCartItem(id) {
             delete cart[id];
             const element = document.getElementById(`qty-${id}`);
@@ -321,7 +316,6 @@
             
             const cartItems = Object.keys(cart);
             
-            // Si el usuario borró todo desde el resumen, regresarlo al menú principal
             if (cartItems.length === 0) {
                 document.getElementById('checkout-total-price').innerText = "$0.00";
                 goToStep(1);
@@ -334,7 +328,6 @@
                 const subtotal = item.price * item.qty;
                 total += subtotal;
                 
-                // Generar fila interactiva con controles (+ / -) y botón eliminar (❌)
                 const summaryRowHtml = `
                     <div class="flex items-center justify-between py-2 border-b border-amber-200 gap-2">
                         <div class="flex-grow">
@@ -355,6 +348,11 @@
             });
             
             document.getElementById('checkout-total-price').innerText = `$${total.toFixed(2)}`;
+
+            // CORRECCIÓN AQUÍ: Cambia visualmente al Paso 3 solo si el usuario no se encuentra ya ahí.
+            if (!document.getElementById('step-3').classList.contains('active')) {
+                goToStep(3);
+            }
         }
 
         function toggleAddress() {
