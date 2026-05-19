@@ -238,7 +238,6 @@
                 const currentNote = cart[item.id] ? (cart[item.id].note || "") : "";
                 const hasNote = currentNote.length > 0;
                 
-                // Estructura adaptada flex-col para dar espacio a la caja de texto inferior
                 const itemHtml = `
                     <div class="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2">
                         <div class="flex items-center justify-between gap-3">
@@ -271,7 +270,6 @@
             goToStep(2);
         }
 
-        // Desplegar/Ocultar el campo de nota
         function toggleNoteField(id) {
             const input = document.getElementById(`note-input-${id}`);
             const btn = document.getElementById(`note-btn-${id}`);
@@ -293,10 +291,8 @@
             }
         }
 
-        // Actualizar el texto de la nota directamente en la base de datos local del carrito
         function updateItemNote(id, name, price, value) {
             if (!cart[id]) {
-                // UX Avanzada: Si el usuario escribe una nota, asumimos automáticamente que quiere llevar al menos 1 plato.
                 cart[id] = { name: name, price: price, qty: 1, note: value };
                 const qtyInput = document.getElementById(`qty-${id}`);
                 if (qtyInput) qtyInput.value = 1;
@@ -306,6 +302,27 @@
             }
 
             if (document.getElementById('step-3').classList.contains('active')) {
+                prepareCheckout();
+            }
+        }
+
+        // NUEVA FUNCIÓN: Elimina de forma directa la nota desde el Checkout (Paso 3)
+        function removeNoteFromCheckout(id) {
+            if (cart[id]) {
+                cart[id].note = '';
+                
+                // Mantenemos sincronizado el paso 2 por si el usuario vuelve atrás
+                const noteInput = document.getElementById(`note-input-${id}`);
+                const noteBtn = document.getElementById(`note-btn-${id}`);
+                if (noteInput) {
+                    noteInput.classList.add('hidden');
+                    noteInput.value = '';
+                }
+                if (noteBtn) {
+                    noteBtn.innerHTML = '📝 Añadir nota especial (ej. sin papas)';
+                }
+                
+                // Refrescamos el resumen visual
                 prepareCheckout();
             }
         }
@@ -437,8 +454,15 @@
                 const subtotal = item.price * item.qty;
                 total += subtotal;
                 
-                // Renderizar nota visual en color ocre si existe alguna especificación
-                const noteHtml = item.note ? `<p class="text-xs text-amber-800 bg-amber-100/60 px-2 py-1 rounded-lg mt-1 font-medium border border-amber-200">📌 Nota: "${item.note}"</p>` : '';
+                // CAMBIO AQUÍ: Se incluye el botón de eliminar nota con estilos consistentes
+                const noteHtml = item.note ? `
+                    <div class="flex items-center justify-between text-xs text-amber-900 bg-amber-100/70 px-2 py-1.5 rounded-xl mt-1 font-medium border border-amber-200 gap-2 shadow-xs">
+                        <span class="truncate pr-1">📌 Nota: "${item.note}"</span>
+                        <button type="button" onclick="removeNoteFromCheckout('${id}')" class="text-red-500 hover:text-red-700 font-bold p-1 cursor-pointer select-none text-[11px] flex-shrink-0 transition" title="Eliminar nota">
+                            ❌
+                        </button>
+                    </div>
+                ` : '';
                 
                 const summaryRowHtml = `
                     <div class="py-2 border-b border-amber-200">
@@ -511,7 +535,7 @@
                 tipo_entrega: document.getElementById('delivery-type').value,
                 direccion: document.getElementById('client-address').value || "Retiro por local",
                 metodo_pago: document.getElementById('payment-method').value,
-                articulos: itemsInCart // Incluye automáticamente el texto de la nota (.note) por artículo
+                articulos: itemsInCart
             };
 
             const n8nWebhookUrl = "https://TU_INSTANCIA_N8N.com/webhook/pedido-tokio"; 
