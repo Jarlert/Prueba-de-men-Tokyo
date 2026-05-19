@@ -161,31 +161,32 @@
     </div>
 
     <script>
+        // BASE DE DATOS OPTIMIZADA CON ENLACES DE IMÁGENES REALES
         const menuData = {
             combos: [
-                { id: "c1", name: "Combo Económico Arroz Tres Carnes", price: 6.19, desc: "450g de arroz, carne variada + 2 lumpias" },
-                { id: "c2", name: "Combo Económico Arroz Oriental", price: 6.19, desc: "450g de arroz, camarón, vegetales + 2 lumpias" },
-                { id: "c3", name: "Promoción Ebby Roll (20 piezas)", price: 9.19, desc: "Roles fríos con camarón empanizado y salsa fuji" },
-                { id: "c4", name: "Combo Fusión Familiar", price: 17.69, desc: "1 Roll Frío + 1 Roll Tempura + 1 Plato + raciones" }
+                { id: "c1", name: "Combo Económico Arroz Tres Carnes", price: 6.19, desc: "450g de arroz, carne variada + 2 lumpias", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80" },
+                { id: "c2", name: "Combo Económico Arroz Oriental", price: 6.19, desc: "450g de arroz, camarón, vegetales + 2 lumpias", image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80" },
+                { id: "c3", name: "Promoción Ebby Roll (20 piezas)", price: 9.19, desc: "Roles fríos con camarón empanizado y salsa fuji", image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80" },
+                { id: "c4", name: "Combo Fusión Familiar", price: 17.69, desc: "1 Roll Frío + 1 Roll Tempura + 1 Plato + raciones", image: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&q=80" }
             ],
             cocina: [
-                { id: "p1", name: "Arroz Especial (Pollo y Camarón)", price: 8.20, desc: "Bandeja individual" },
-                { id: "p2", name: "Arroz 3 Carnes (Pollo, Carne, Cerdo)", price: 8.20, desc: "Bandeja individual" },
-                { id: "p3", name: "Tallarines de Carne y Camarón", price: 8.20, desc: "Bandeja individual" },
-                { id: "p4", name: "Pollo Agridulce con Papas", price: 8.20, desc: "Acompañado de papas fritas" }
+                { id: "p1", name: "Arroz Especial (Pollo y Camarón)", price: 8.20, desc: "Bandeja individual de la casa", image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80" },
+                { id: "p2", name: "Arroz 3 Carnes (Pollo, Carne, Cerdo)", price: 8.20, desc: "Bandeja individual", image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80" },
+                { id: "p3", name: "Tallarines de Carne y Camarón", price: 8.20, desc: "Bandeja individual", image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80" },
+                { id: "p4", name: "Pollo Agridulce con Papas", price: 8.20, desc: "Acompañado de papas fritas", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400&q=80" }
             ],
             sushi: [
-                { id: "s1", name: "Nozomi Roll Tempura (12 pzs)", price: 6.69, desc: "Camarón tempura, cangrejo, queso crema y salsa anguila" },
-                { id: "s2", name: "Okinawa Roll Tempura (12 pzs)", price: 6.69, desc: "Topping de camarón tempura y salsa fuji" },
-                { id: "s3", name: "Hiroshima Roll Tempura (12 pzs)", price: 6.69, desc: "Pescado blanco tempura, aguacate y salsa anguila" }
+                { id: "s1", name: "Nozomi Roll Tempura (12 pzs)", price: 6.69, desc: "Camarón tempura, cangrejo, queso crema y salsa anguila", image: "https://images.unsplash.com/photo-1617196034183-421b4917c92d?w=400&q=80" },
+                { id: "s2", name: "Okinawa Roll Tempura (12 pzs)", price: 6.69, desc: "Topping de camarón tempura y salsa fuji", image: "https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=400&q=80" },
+                { id: "s3", name: "Hiroshima Roll Tempura (12 pzs)", price: 6.69, desc: "Pescado blanco tempura, aguacate y salsa anguila", image: "https://images.unsplash.com/photo-1582450871972-ab5ca641643d?w=400&q=80" }
             ],
             extras: [
-                { id: "e1", name: "Wakame (100g)", price: 4.50, desc: "Ensalada de algas marinas" },
-                { id: "e2", name: "Papas Cheddar", price: 4.00, desc: "Ración con queso fundido" },
-                { id: "e3", name: "Pepsi Grande (1.3 Litros)", price: 2.00, desc: "Refresco ideal para compartir" },
-                { id: "e4", name: "Pepsi Mediana (1 Litro)", price: 1.50, desc: "Refresco individual" },
-                { id: "e5", name: "Salsa de Anguila Extra", price: 0.50, desc: "Porción adicional de salsa dulce" },
-                { id: "e6", name: "Salsa Fuji Extra", price: 0.50, desc: "Porción adicional de salsa de la casa" }
+                { id: "e1", name: "Wakame (100g)", price: 4.50, desc: "Ensalada de algas marinas", image: "https://images.unsplash.com/photo-1633504535090-b33a8af79fa2?w=400&q=80" },
+                { id: "e2", name: "Papas Cheddar", price: 4.00, desc: "Ración con queso fundido", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" },
+                { id: "e3", name: "Pepsi Grande (1.3 Litros)", price: 2.00, desc: "Refresco ideal para compartir", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80" },
+                { id: "e4", name: "Pepsi Mediana (1 Litro)", price: 1.50, desc: "Refresco individual", image: "https://images.unsplash.com/photo-1543257580-7269da773bf5?w=400&q=80" },
+                { id: "e5", name: "Salsa de Anguila Extra", price: 0.50, desc: "Porción adicional de salsa dulce", image: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&q=80" },
+                { id: "e6", name: "Salsa Fuji Extra", price: 0.50, desc: "Porción adicional de salsa de la casa", image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80" }
             ]
         };
 
@@ -236,17 +237,21 @@
             menuData[category].forEach(item => {
                 const currentQty = cart[item.id] ? cart[item.id].qty : 0;
                 
+                // CAMBIO AQUÍ: Se añade la etiqueta <img> controlando tamaño (w-20 h-20) y ajuste (object-cover)
                 const itemHtml = `
-                    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-                        <div class="flex-grow pr-2">
-                            <h4 class="text-base font-bold text-gray-800">${item.name}</h4>
-                            <p class="text-xs text-gray-400 mb-1">${item.desc}</p>
-                            <span class="text-red-600 font-bold text-base">$${item.price.toFixed(2)}</span>
+                    <div class="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between gap-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-xl flex-shrink-0 bg-gray-100 border border-gray-100">
+                        
+                        <div class="flex-grow min-w-0 pr-1">
+                            <h4 class="text-sm font-bold text-gray-800 leading-snug">${item.name}</h4>
+                            <p class="text-xs text-gray-400 my-0.5 line-clamp-2">${item.desc}</p>
+                            <span class="text-red-600 font-bold text-sm block mt-0.5">$${item.price.toFixed(2)}</span>
                         </div>
-                        <div class="flex items-center space-x-2 bg-gray-100 p-1 rounded-xl flex-shrink-0 border border-gray-200">
-                            <button type="button" onclick="updateQty('${item.id}', '${item.name}', ${item.price}, -1)" class="w-9 h-9 bg-white rounded-lg font-bold text-xl text-gray-700 shadow-sm select-none cursor-pointer">-</button>
-                            <input type="number" id="qty-${item.id}" value="${currentQty}" min="0" onchange="setExactQty('${item.id}', '${item.name}', ${item.price}, this.value)" class="w-10 text-center font-bold bg-transparent focus:outline-none text-md">
-                            <button type="button" onclick="updateQty('${item.id}', '${item.name}', ${item.price}, 1)" class="w-9 h-9 bg-white rounded-lg font-bold text-xl text-gray-700 shadow-sm select-none cursor-pointer">+</button>
+
+                        <div class="flex items-center space-x-1 bg-gray-100 p-1 rounded-xl flex-shrink-0 border border-gray-200">
+                            <button type="button" onclick="updateQty('${item.id}', '${item.name}', ${item.price}, -1)" class="w-8 h-8 bg-white rounded-lg font-bold text-lg text-gray-700 shadow-sm select-none cursor-pointer">-</button>
+                            <input type="number" id="qty-${item.id}" value="${currentQty}" min="0" onchange="setExactQty('${item.id}', '${item.name}', ${item.price}, this.value)" class="w-9 text-center font-black bg-transparent focus:outline-none text-sm text-gray-800">
+                            <button type="button" onclick="updateQty('${item.id}', '${item.name}', ${item.price}, 1)" class="w-8 h-8 bg-white rounded-lg font-bold text-lg text-gray-700 shadow-sm select-none cursor-pointer">+</button>
                         </div>
                     </div>
                 `;
@@ -256,7 +261,6 @@
             goToStep(2);
         }
 
-        // Modifica la cantidad usando los botones + y -
         function updateQty(id, name, price, change) {
             if (!cart[id]) {
                 cart[id] = { name: name, price: price, qty: 0 };
@@ -280,7 +284,6 @@
             }
         }
 
-        // Modifica la cantidad ingresando texto directo por teclado
         function setExactQty(id, name, price, value) {
             let parsedQty = parseInt(value, 10);
             
