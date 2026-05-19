@@ -12,9 +12,15 @@
 </head>
 <body class="bg-gray-50 font-sans text-gray-900 min-h-screen flex flex-col pb-24">
 
-    <header class="bg-red-700 text-white text-center py-5 shadow-md">
-        <h1 class="text-3xl font-bold tracking-wide">🍣 TOKIO SUSHI</h1>
-        <p class="text-sm mt-1 text-red-100">Delivery & Pick Up</p>
+    <header class="bg-red-700 text-white py-4 shadow-md sticky top-0 z-40 max-w-md mx-auto w-full grid grid-cols-5 items-center px-4">
+        <button id="header-back-btn" onclick="handleHeaderBack()" class="invisible text-2xl font-bold w-10 h-10 flex items-center justify-center hover:bg-red-800 rounded-full transition cursor-pointer col-span-1">
+            ←
+        </button>
+        <div class="text-center col-span-3">
+            <h1 class="text-xl font-bold tracking-wide">🍣 TOKIO SUSHI</h1>
+            <p class="text-xs text-red-100">Delivery & Pick Up</p>
+        </div>
+        <div class="col-span-1"></div>
     </header>
 
     <main class="max-w-md w-full mx-auto p-4 flex-grow">
@@ -41,9 +47,7 @@
                 </button>
 
                 <button onclick="selectCategory('sushi')" class="w-full bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm hover:border-red-500 transition flex items-center space-x-4 text-left cursor-pointer">
-                    <div class="w-16 h-16 bg-orange-50 rounded-xl flex-shrink-0 flex items-center justify-center text-3xl">
-                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🍣</text></svg>" class="w-12 h-12" alt="Sushi">
-                    </div>
+                    <div class="w-16 h-16 bg-orange-50 rounded-xl flex-shrink-0 flex items-center justify-center text-3xl">🍣</div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-800">Sushi Especial</h3>
                         <p class="text-xs text-gray-500">Roles Tempura de 12 piezas</p>
@@ -61,22 +65,20 @@
         </div>
 
         <div id="step-2" class="step space-y-4">
-            <div class="flex items-center justify-between my-3">
-                <button onclick="goToStep(1)" class="text-red-600 font-bold flex items-center text-lg cursor-pointer bg-red-50 px-4 py-2 rounded-xl">◀ Volver al Menú</button>
-                <h2 id="category-title" class="text-xl font-bold text-gray-800">Platos</h2>
+            <div class="my-3 text-center">
+                <h2 id="category-title" class="text-xl font-bold text-gray-800 bg-gray-100 py-2 rounded-xl">Platos</h2>
             </div>
             
             <div id="items-container" class="space-y-3"></div>
 
-            <button onclick="goToStep(1)" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-2xl shadow-md mt-4 cursor-pointer transition">
-                ↩️ Seguir agregando otras variedades
+            <button onclick="handleHeaderBack()" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-2xl shadow-md mt-4 cursor-pointer transition">
+                ↩️ Volver a ver otras categorías
             </button>
         </div>
 
         <div id="step-3" class="step space-y-4">
-            <div class="flex items-center justify-between my-3">
-                <button onclick="goToStep(1)" class="text-red-600 font-bold flex items-center text-lg cursor-pointer bg-red-50 px-4 py-2 rounded-xl">◀ Modificar Pedido</button>
-                <h2 class="text-xl font-bold text-gray-800">Finalizar Orden</h2>
+            <div class="my-3 text-center">
+                <h2 class="text-xl font-bold text-gray-800 bg-gray-100 py-2 rounded-xl">Finalizar Orden</h2>
             </div>
 
             <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 shadow-sm">
@@ -166,7 +168,7 @@
                 { id: "s3", name: "Hiroshima Roll Tempura (12 pzs)", price: 6.69, desc: "Pescado blanco tempura, aguacate y salsa anguila" }
             ],
             extras: [
-                { id: "e1", name: "Wakame (100g)", price: 4.50, desc: "Ensalada de algas marinas marinas" },
+                { id: "e1", name: "Wakame (100g)", price: 4.50, desc: "Ensalada de algas marinas" },
                 { id: "e2", name: "Papas Cheddar", price: 4.00, desc: "Ración con queso fundido" },
                 { id: "e3", name: "Pepsi Grande (1.3 Litros)", price: 2.00, desc: "Refresco ideal para compartir" },
                 { id: "e4", name: "Pepsi Mediana (1 Litro)", price: 1.50, desc: "Refresco individual" },
@@ -177,11 +179,43 @@
 
         let cart = {};
 
-        function goToStep(stepNumber) {
+        // Inyectar estado inicial en el historial al cargar la página
+        window.onload = function() {
+            history.replaceState({ step: 1 }, "Paso 1");
+        };
+
+        // Escucha si el cliente usa el botón "Atrás" nativo de su teléfono o navegador
+        window.onpopstate = function(event) {
+            if (event.state && event.state.step) {
+                goToStep(event.state.step, false); // Cambia de pantalla sin volver a empujar el historial
+            } else {
+                goToStep(1, false);
+            }
+        };
+
+        function handleHeaderBack() {
+            history.back(); // Ejecuta la acción "Atrás" simulando el botón del navegador
+        }
+
+        function goToStep(stepNumber, pushState = true) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${stepNumber}`).classList.add('active');
             window.scrollTo(0, 0);
+            
+            // Mostrar u ocultar la flecha de atrás en el header superior
+            const backBtn = document.getElementById('header-back-btn');
+            if (stepNumber > 1 && stepNumber < 4) {
+                backBtn.classList.remove('invisible');
+            } else {
+                backBtn.classList.add('invisible');
+            }
+
             updateStickyBarVisibility(stepNumber);
+
+            // Guardar el paso actual en el historial de navegación del dispositivo
+            if (pushState) {
+                history.pushState({ step: stepNumber }, `Paso ${stepNumber}`);
+            }
         }
 
         function selectCategory(category) {
@@ -191,7 +225,6 @@
             const titles = { combos: "Promos y Combos", cocina: "Platos de Cocina", sushi: "Roles Especiales", extras: "Bebidas y Extras" };
             document.getElementById('category-title').innerText = titles[category];
 
-            // Buscar en todas las categorías del menú de datos estáticos
             menuData[category].forEach(item => {
                 const currentQty = cart[item.id] ? cart[item.id].qty : 0;
                 
@@ -245,8 +278,7 @@
 
             document.getElementById('sticky-cart-total').innerText = `$${total.toFixed(2)}`;
             
-            // Si hay elementos y no estamos en el paso final, mostrar barra
-            const activeStep = document.querySelector('.step.active').id;
+            const activeStep = document.querySelector('.step.active') ? document.querySelector('.step.active').id : 'step-1';
             if (count > 0 && activeStep !== 'step-3' && activeStep !== 'step-4') {
                 document.getElementById('sticky-cart-bar').classList.remove('hidden');
             } else {
@@ -255,7 +287,9 @@
         }
 
         function updateStickyBarVisibility(currentStep) {
-            const count = Object.keys(cart).length;
+            let count = 0;
+            Object.values(cart).forEach(item => { count += item.qty; });
+
             if (count > 0 && currentStep !== 3 && currentStep !== 4) {
                 document.getElementById('sticky-cart-bar').classList.remove('hidden');
             } else {
@@ -301,10 +335,9 @@
             document.getElementById('order-form').reset();
             calculateTotals();
             toggleAddress();
-            goToStep(1);
+            goToStep(1, false);
         }
 
-        // ACCIÓN FINAL: ENVÍO DE DATOS A N8N
         async function sendOrder(event) {
             event.preventDefault();
             
@@ -329,7 +362,6 @@
                 articulos: itemsInCart
             };
 
-            // URL del webhook de n8n (La cambiaremos cuando configuremos n8n)
             const n8nWebhookUrl = "https://TU_INSTANCIA_N8N.com/webhook/pedido-tokio"; 
 
             try {
@@ -342,7 +374,7 @@
                 if (response.ok || response.status === 200) {
                     goToStep(4);
                 } else {
-                    goToStep(4); // Forzar éxito visual en fase de pruebas si n8n no responde aún
+                    goToStep(4); 
                 }
             } catch (error) {
                 console.error("Error:", error);
