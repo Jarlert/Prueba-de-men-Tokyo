@@ -20,7 +20,7 @@
 <body class="bg-gray-50 font-sans text-gray-900 min-h-screen flex flex-col pb-24">
 
     <header class="bg-red-700 text-white py-4 shadow-md sticky top-0 z-40 max-w-md mx-auto w-full grid grid-cols-5 items-center px-4">
-        <button id="header-back-btn" onclick="handleHeaderBack()" class="invisible text-2xl font-bold w-10 h-10 flex items-center justify-center hover:bg-red-800 rounded-full transition cursor-pointer col-span-1">
+        <button id="header-back-btn" onclick="goToStep(1)" class="invisible text-2xl font-bold w-10 h-10 flex items-center justify-center hover:bg-red-800 rounded-full transition cursor-pointer col-span-1">
             ←
         </button>
         <div class="text-center col-span-3">
@@ -78,7 +78,7 @@
             
             <div id="items-container" class="space-y-3"></div>
 
-            <button onclick="handleHeaderBack()" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-2xl shadow-md mt-4 cursor-pointer transition">
+            <button onclick="goToStep(1)" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-2xl shadow-md mt-4 cursor-pointer transition">
                 ↩️ Volver a ver otras categorías
             </button>
         </div>
@@ -203,10 +203,6 @@
             }
         };
 
-        function handleHeaderBack() {
-            history.back();
-        }
-
         function goToStep(stepNumber, pushState = true) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${stepNumber}`).classList.add('active');
@@ -306,12 +302,10 @@
             }
         }
 
-        // NUEVA FUNCIÓN: Elimina de forma directa la nota desde el Checkout (Paso 3)
         function removeNoteFromCheckout(id) {
             if (cart[id]) {
                 cart[id].note = '';
                 
-                // Mantenemos sincronizado el paso 2 por si el usuario vuelve atrás
                 const noteInput = document.getElementById(`note-input-${id}`);
                 const noteBtn = document.getElementById(`note-btn-${id}`);
                 if (noteInput) {
@@ -322,7 +316,6 @@
                     noteBtn.innerHTML = '📝 Añadir nota especial (ej. sin papas)';
                 }
                 
-                // Refrescamos el resumen visual
                 prepareCheckout();
             }
         }
@@ -454,7 +447,6 @@
                 const subtotal = item.price * item.qty;
                 total += subtotal;
                 
-                // CAMBIO AQUÍ: Se incluye el botón de eliminar nota con estilos consistentes
                 const noteHtml = item.note ? `
                     <div class="flex items-center justify-between text-xs text-amber-900 bg-amber-100/70 px-2 py-1.5 rounded-xl mt-1 font-medium border border-amber-200 gap-2 shadow-xs">
                         <span class="truncate pr-1">📌 Nota: "${item.note}"</span>
@@ -511,7 +503,9 @@
             document.getElementById('order-form').reset();
             calculateTotals();
             toggleAddress();
-            goToStep(1, false);
+            // MODIFICADO: Agregamos "true" (o simplemente lo dejamos en blanco para que tome el valor por defecto) 
+            // Esto sobrescribe la memoria del navegador para que sepa que estamos empezando una nueva navegación limpia desde el Paso 1.
+            goToStep(1); 
         }
 
         async function sendOrder(event) {
