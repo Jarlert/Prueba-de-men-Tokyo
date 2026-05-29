@@ -122,7 +122,12 @@
                 </div>
 
                 <div id="address-container">
-                    <label class="block text-gray-700 font-bold text-md mb-1">Dirección de Entrega</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-gray-700 font-bold text-md">Dirección de Entrega</label>
+                        <button type="button" onclick="alert('📍 Función en desarrollo: En la versión Premium, el sistema detectará la ubicación exacta del cliente por GPS automáticamente.')" class="text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 hover:bg-red-200 transition cursor-pointer shadow-sm">
+                            <i class="fa-solid fa-location-crosshairs"></i> Usar GPS
+                        </button>
+                    </div>
                     <textarea id="client-address" class="w-full p-3 border border-gray-300 rounded-xl text-lg focus:outline-none focus:border-red-500" rows="2" placeholder="Indica calle, edificio o puntos de referencia..."></textarea>
                 </div>
 
@@ -503,8 +508,6 @@
             document.getElementById('order-form').reset();
             calculateTotals();
             toggleAddress();
-            // MODIFICADO: Agregamos "true" (o simplemente lo dejamos en blanco para que tome el valor por defecto) 
-            // Esto sobrescribe la memoria del navegador para que sepa que estamos empezando una nueva navegación limpia desde el Paso 1.
             goToStep(1); 
         }
 
